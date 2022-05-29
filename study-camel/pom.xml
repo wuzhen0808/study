@@ -4,13 +4,18 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.example</groupId>
   <artifactId>study-camel</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
+  <properties>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+  </properties>
   <modules>
     <module>study-camel-core</module>
     <module>study-camel-components</module>
     <module>study-camel-quarkus</module>
+    <module>study-camel-kafka</module>
     <module>code-with-quarkus</module>
   </modules>
 </project>
