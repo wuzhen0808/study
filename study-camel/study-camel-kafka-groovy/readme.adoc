@@ -1,0 +1,55 @@
+== How to build and run
+This project just aims to show a start point for development of Camel, Kafka plus Groovy and Gradle. The example here will read message from console and send them to kafka, receiving message from topic and print them to console by logger. Please read the code for the route structure, it is as sample as you expect.
+
+=== 1.Preconditions:
+1.1. Kafka server is installed and running. If you plan to run the example with an external kafka server. Following quick start guide may helpful. https://kafka.apache.org/quickstart[Click here] for the quick start of kafka.
+
+1.2. Docker is installed. As Plan B, if you don't have an external kafka, or you do not want to get kafka to be installed and running, you must have docker installed by which the example program will run a kafka container for you.
+
+=== 2.Running:
+2.1 In the top directory of the example project, run the gradle command as below.
+
+[source,shell]
+--
+$ ./buildAndRun.sh
+--
+2.2 Select kafka server to connect.
+[source,shell]
+--
+Please select one of the options by input the number ahead each of them.
+1: Run with external(localhost port 9092)kafka instance.
+2: Run with embedded kafka by using docker.
+
+>
+--
+For option 1, the default brokers address is localhost:9092. There will be connection error print in console as blow if no kafka instance is available in local host. You need Ctl+C to exit program and rerun the buildAndRun.sh script if you want reselect the option 2.
+[source,shell]
+--
+2022-05-30 17:59:15,504 [ad | producer-1] INFO  NetworkClient                  - [Producer clientId=producer-1] Node -1 disconnected.
+2022-05-30 17:59:15,504 [ad | producer-1] WARN  NetworkClient                  - [Producer clientId=producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Broker may not be available.
+
+--
+
+For option 2, you may need to wait awhile for the image of kafka to be loaded and the container of kafka is ready to receive connection.
+
+2.3. Input any text at console.
+
+[source,shell]
+--
+hello
+--
+
+you will see message is send to kafka topic and immediately consumed by camel as the log message print in console.
+[source,shell]
+--
+2022-05-30 17:55:53,052 [ckstart-events]] INFO  Handler1                       - h1,msg received:hello
+2022-05-30 17:55:53,053 [ckstart-events]] INFO  Handler2                       - handle:hello
+2022-05-30 17:55:53,053 [ckstart-events]] INFO  Handler3                       - h3:org.example.Handler3$MyMessage@74082814
+
+--
+=== Building(without running):
+[source,shell]
+--
+$ ./gradlew build
+--
+

@@ -7,7 +7,14 @@
 
 plugins {
     id 'groovy'
+    id 'application'
 }
+
+apply plugin: 'groovy'
+//apply plugin: 'application'
+//application {
+//    mainClassName = 'org.example.App'
+//}
 
 group 'org.example'
 version '1.0.Groovy-SNAPSHOT'
@@ -17,10 +24,9 @@ repositories {
     maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
 }
 
-apply plugin: 'groovy'
-
 dependencies {
-
+    implementation "org.testcontainers:kafka:1.17.1"
+    implementation "commons-cli:commons-cli:1.5.0"
     implementation "org.codehaus.groovy:groovy:3.0.10"
     implementation "org.apache.camel:camel-core:3.16.0"
     implementation "org.apache.camel:camel-kafka:3.16.0"
@@ -32,4 +38,12 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
+tasks.named("build") { finalizedBy("buildLast") }
 
+task buildLast {
+    FileWriter writer = new FileWriter(new File(project.buildDir, "run.sh"))
+    String cmdLine = "java -classpath ${-> sourceSets.main.runtimeClasspath.getAsPath()} org.example.App"
+    writer.write(cmdLine)
+    writer.close()
+    println cmdLine
+}

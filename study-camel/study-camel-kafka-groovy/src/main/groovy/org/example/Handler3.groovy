@@ -12,6 +12,6 @@ class Handler3 {
     private static Logger LOG = LoggerFactory.getLogger(Handler3)
 
     void handle(MyMessage msg) {
-        LOG.info "h3:{}", msg
+        LOG.info "h3:${msg.msg}"
     }
 }

@@ -14,10 +14,11 @@ class ConsoleComponent extends DefaultComponent {
     static class ConsoleConsumer extends DefaultConsumer implements Runnable {
         Thread readerThread
         ConsoleEndpoint endpoint
-
-        ConsoleConsumer(ConsoleEndpoint endpoint, Processor processor) {
+        Closure shutdownHook
+        ConsoleConsumer(ConsoleEndpoint endpoint, Processor processor, Closure shutdownHook) {
             super(endpoint, processor)
             this.endpoint = endpoint
+            this.shutdownHook = shutdownHook;
         }
 
         @Override
@@ -25,7 +26,6 @@ class ConsoleComponent extends DefaultComponent {
             super.doStart()
             this.readerThread = new Thread(this)
             this.readerThread.start()
-
 
         }
 
@@ -47,7 +47,8 @@ class ConsoleComponent extends DefaultComponent {
         private void runInternal() throws Exception {
             while (true) {
                 LineNumberReader reader = new LineNumberReader(new InputStreamReader(System.in))
-                System.out.print(">")
+
+                print ">"
                 String line = reader.readLine()
                 if (line == null) {
                     System.out.println("line is null?")
@@ -60,6 +61,7 @@ class ConsoleComponent extends DefaultComponent {
 
                 doProcess(line)
             }
+
 
         }
 
@@ -93,9 +95,10 @@ class ConsoleComponent extends DefaultComponent {
 
     static class ConsoleEndpoint extends DefaultEndpoint {
         String uri
-
-        ConsoleEndpoint(String uri) {
+        Closure shutdownHook;
+        ConsoleEndpoint(String uri, Closure shutdownHook) {
             this.uri = uri
+            this.shutdownHook = shutdownHook
         }
 
         @Override
@@ -110,13 +113,18 @@ class ConsoleComponent extends DefaultComponent {
 
         @Override
         Consumer createConsumer(Processor processor) throws Exception {
-            return new ConsoleConsumer(this, processor)
+            return new ConsoleConsumer(this, processor, shutdownHook)
         }
+    }
+
+    Closure shutdownHook
+    ConsoleComponent(Closure shutdownHook){
+        this.shutdownHook =shutdownHook
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        return new ConsoleEndpoint(uri)
+        return new ConsoleEndpoint(uri, shutdownHook)
     }
 }
